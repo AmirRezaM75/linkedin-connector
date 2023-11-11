@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  fpm:
+    build:
+      args:
+        user: ${USER}
+        uid: ${UID}
+      context: docker/fpm
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - "${MYSQL_FORWARD_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/config/:/etc/nginx/conf.d
+    networks:
+      - default
+
+volumes:
+  mysql-data:
+    driver: local

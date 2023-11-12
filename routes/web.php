@@ -18,5 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/linkedin-connections', [LinkedinConnectionController::class, 'index'])
+    ->name('linkedin-connections.index');
+
 Route::post('/linkedin-connections', [LinkedinConnectionController::class, 'store'])
     ->name('linkedin-connections.store');

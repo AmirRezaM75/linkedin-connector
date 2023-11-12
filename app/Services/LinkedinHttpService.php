@@ -61,6 +61,17 @@ class LinkedinHttpService
 
     private function getCookies(): array|null
     {
+        // LinkedIn will ask you to solve a challenge in the form of captcha
+        // When detected unusual traffic from your account.
+        // It's only possible with image processing.
+        // In order to don't stuck in this step. We recommend you to login into your account via browser
+        // open the console and execute `document.cookie` and past the value into `storage/cookies.txt` file.
+        $content = file_get_contents(storage_path('app/cookies.txt'));
+
+        if (!empty($content)) {
+            return $this->cookieAsArray($content);
+        }
+
         return Cache::get('linkedin-cookies');
     }
 
@@ -166,5 +177,26 @@ class LinkedinHttpService
 
         $byte = pack('C*', ...$numbers);
         return base64_encode($byte);
+    }
+
+    private function cookieAsArray(string $content): array {
+
+        $content = trim($content);
+
+        $cookies = explode(';', $content);
+
+        $output = array();
+
+        foreach ($cookies as $cookie) {
+            $parts = explode('=', $cookie, 2);
+
+            $name = trim($parts[0]);
+            $value = isset($parts[1]) ? urldecode(trim($parts[1])) : '';
+
+            // Store the cookie in the PHP array
+            $output[$name] = $value;
+        }
+
+        return $output;
     }
 }

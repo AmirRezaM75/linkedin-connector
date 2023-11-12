@@ -42,4 +42,4 @@ https://www.linkedin.com/in/ali/
 LinkedIn will ask you to solve a challenge in the form of captcha
 when detected unusual traffic from your account.
 In order to don't stuck in this step. We recommend you to login into your account via browser
-open the console and execute `document.cookie` and past the value into `storage/cookies.txt` file.
+open the console and execute `document.cookie` and paste the value into `storage/app/cookies.txt` file.

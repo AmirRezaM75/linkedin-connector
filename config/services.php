@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'linkedin' => [
+        'message' => env('LINKEDIN_MESSAGE', 'Hello'),
+        'username' => env('LINKEDIN_USERNAME', ''),
+        'password' => env('LINKEDIN_PASSWORD', '')
+    ]
+
 ];

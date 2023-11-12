@@ -6,12 +6,15 @@
 cp .env.example .env
 ```
 
-Update database credentials to your needs:
+Update database and LinkedIn credentials in `.env`:
 
 ```
 DB_DATABASE=
 DB_USERNAME=
 DB_PASSWORD=
+
+LINKEDIN_USERNAME=
+LINKEDIN_PASSWORD=
 ```
 
 Build the image and run the container:

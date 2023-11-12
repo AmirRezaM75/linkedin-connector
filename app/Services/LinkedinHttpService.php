@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\LinkedinChallengeException;
 use App\Exceptions\MaxMessageLengthException;
+use Exception;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Carbon;
@@ -66,7 +67,11 @@ class LinkedinHttpService
         // It's only possible with image processing.
         // In order to don't stuck in this step. We recommend you to login into your account via browser
         // open the console and execute `document.cookie` and past the value into `storage/cookies.txt` file.
-        $content = file_get_contents(storage_path('app/cookies.txt'));
+        try {
+            $content = file_get_contents(storage_path('app/cookies.txt'));
+        } catch (Exception $exception) {
+            $content = null;
+        }
 
         if (!empty($content)) {
             return $this->cookieAsArray($content);
@@ -137,7 +142,8 @@ class LinkedinHttpService
         ];
 
         return Http::withHeaders(
-            ["accept" => "application/vnd.linkedin.normalized+json+2.1"] + $this->getProfileHeaders()
+            ["accept" => "application/vnd.linkedin.normalized+json+2.1"] +
+            $this->getProfileHeaders()
         )
             ->withCookies($this->getCookies(), 'linkedin.com')
             ->post("https://www.linkedin.com/voyager/api/growth/normInvitations", $payload);
@@ -179,8 +185,8 @@ class LinkedinHttpService
         return base64_encode($byte);
     }
 
-    private function cookieAsArray(string $content): array {
-
+    private function cookieAsArray(string $content): array
+    {
         $content = trim($content);
 
         $cookies = explode(';', $content);
@@ -191,9 +197,8 @@ class LinkedinHttpService
             $parts = explode('=', $cookie, 2);
 
             $name = trim($parts[0]);
-            $value = isset($parts[1]) ? urldecode(trim($parts[1])) : '';
+            $value = isset($parts[1]) ? trim($parts[1], '"') : '';
 
-            // Store the cookie in the PHP array
             $output[$name] = $value;
         }
 
